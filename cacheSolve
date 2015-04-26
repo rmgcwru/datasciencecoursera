@@ -1,0 +1,41 @@
+## cacheSolve computes the inverse of the special "matrix" returned by makeCacheMatrix  Matrix
+## If the inverse has already been calculated (and the matrix has not changed)
+## then the cachesolve should retrieve the inverse from the cache
+cacheSolve <- function(x, ...) {
+        ##  gets the inverse of the matrix stored in cache
+        cache <- x$getInverse()
+
+        # if inverted matrix exists it returns from cache
+        # or else creates the matrix in working environment
+        if (!is.null(cache)) {
+                message("retrieving cached data")
+                # display matrix 
+                return(cache)
+        }
+        # if matrix doesn’t exist then it creates it
+        matrix <- x$get()
+
+        # make sure matrix is square and invertible
+        # if not, handle exception cleanly
+        tryCatch( {
+                # set and return inverse of matrix
+                cache <- solve(matrix, ...)
+        },
+        error = function(e) {
+                message("Error:")
+                message(e)
+                return(NA)
+        },
+        warning = function(e) {
+                message("Warning:")
+                message(e)
+                return(NA)
+  },
+        finally = {
+                # set inverted matrix in cache
+                x$setMatrix(cache)
+        } )
+
+        # display matrix in console
+        return (cache)
+}
